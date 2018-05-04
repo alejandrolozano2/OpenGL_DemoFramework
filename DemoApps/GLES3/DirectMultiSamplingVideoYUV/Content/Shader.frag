@@ -8,18 +8,33 @@
  uniform sampler2D my_Texture0;           
  uniform sampler2D my_Texture1;
  in vec2 vTexcoor;
- out vec4 out_color;
- 
+
+layout(location = 0) out vec2 out_color;
+layout(location = 1) out vec2 out_color2;
+
  void main()
  {  
- 
-  float Y = texture(my_Texture0, vTexcoor).a;
-  float U = texture(my_Texture1, vTexcoor).z;
-  float V= texture(my_Texture1, vTexcoor).a;
 
-  float R= Y + 1.140*(V-0.5);
-  float G = Y - 0.395*(U-0.5) - 0.581*(V-0.5);
-  float B= Y + 2.032*(U-0.5); 
+    
+    /*Downsample CbCr*/
+    float ycoordinate = vTexcoor.y * 2.0;
 
-  out_color =vec4(R, G , B, 1.0); 
+
+    float Y1;
+    float Y2;
+    float Cb;
+    float Cr;
+    vec2 mycoord = vec2(vTexcoor.x, ycoordinate); 
+
+  
+    Y1 = texture(my_Texture0, vTexcoor).x;
+    Y2 = texture(my_Texture0, vTexcoor).z;
+    
+    Cb = texture(my_Texture0, mycoord).y;
+    Cr = texture(my_Texture0, mycoord).a;
+
+    out_color =vec2(Y1,Y2);
+    out_color2 =vec2(Cb,Cr); 
+
  }
+
